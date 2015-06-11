@@ -40,7 +40,7 @@ def find_yml_in_dir(dirname):
 
 def update_yaml_from_dir(dirname):
     for fname in find_yml_in_dir(dirname):
-        update_env_from_yaml(fname)
+        update_env_from_file(fname)
 
 
 def update_env_from_file(fname):
