@@ -44,9 +44,16 @@ def update_yaml_from_dir(dirname):
 
 
 def update_env_from_file(fname):
-    new_env = yaml.safe_load(open(fn))
-    flat_env = dict(flatten(new_env))
-    os.environ.update(flat_env)
+    new_env = yaml.safe_load(open(fname))
+    flat_env = {}
+
+    # Order isn't important
+    if isinstance(new_env, dict):
+        new_env = [new_env]
+
+    for item in new_env:
+        for k, v in flatten(item):
+            os.environ[k] = v
 
 
 def parse_args(args=None):
@@ -69,23 +76,23 @@ def parse_args(args=None):
         '--directory': update_yaml_from_dir,
     }
 
-    state = None
+    action = None
 
     while args:
         arg = args.pop(0)
-        if not state:
-            for flag, key in flags.iteritems():
+        if not action:
+            for flag, func in flags.iteritems():
                 if arg.startswith(flag):
-                    state = key
+                    action = func
 
             # Done with our flags
-            if not state:
+            if not action:
                 results['cmd'] = [arg] + args
                 break
 
-        elif state:
-            results[args].append((state, arg))
-            state = None
+        elif action:
+            results['actions'].append((action, arg))
+            action = None
 
     return results
 
@@ -93,10 +100,11 @@ def parse_args(args=None):
 def main():
     args = parse_args()
 
-    map(lambda func, arg: func(arg), args['actions'])
+    for func, arg in args['actions']:
+        func(arg)
 
     if args['cmd']:
-        subprocess.call(args['cmd'])
+        subprocess.call(' '.join(args['cmd']), shell=True)
 
 if __name__ == '__main__':
     main()
