@@ -5,7 +5,11 @@ from withenv.cli import parse_args
 
 class TestArgParsing(object):
     def setup(self):
-        self.result = {'cmd': [], 'env_files': []}
+        self.result = {
+            'cmd': [],
+            'env_files': [],
+            'env_dirs': [],
+        }
 
     def test_defaults(self):
         assert parse_args([]) == self.result

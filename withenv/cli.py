@@ -3,10 +3,12 @@ import sys
 import json
 import subprocess
 
+from heapq import heappush
+
 import yaml
 
 
-def env(node, prefix=None):
+def flatten(node, prefix=None):
     """
     This is an iterator that returns a list of flattened env
     vars based on the conf file supplied
@@ -18,9 +20,33 @@ def env(node, prefix=None):
         if not isinstance(v, dict):
             yield (k, os.path.expandvars(str(v)))
         else:
-            for kid in env(v, prefix=k):
+            for kid in flatten(v, prefix=k):
                 print(kid)
                 yield kid
+
+
+def find_yml_in_dir(dirname):
+    def is_yaml(fn):
+        return fn.endswith(('yml', 'yaml'))
+
+    fnames = []  # a heap
+
+    for dirpath, dirnames, filenames in os.walk(dirname):
+        for fn in filter(is_yaml, filenames):
+            heappush(fnames, os.path.join(dirpath, fn))
+
+    return fnames
+
+
+def update_yaml_from_dir(dirname):
+    for fname in find_yml_in_dir(dirname):
+        update_env_from_yaml(fname)
+
+
+def update_env_from_file(fname):
+    new_env = yaml.safe_load(open(fn))
+    flat_env = dict(flatten(new_env))
+    os.environ.update(flat_env)
 
 
 def parse_args(args=None):
@@ -33,7 +59,14 @@ def parse_args(args=None):
 
     results = {
         'cmd': [],
-        'env_files': [],
+        'actions': [],
+    }
+
+    flags = {
+        '-e': update_env_from_file,
+        '--environment': update_env_from_file,
+        '-d': update_yaml_from_dir,
+        '--directory': update_yaml_from_dir,
     }
 
     state = None
@@ -41,13 +74,17 @@ def parse_args(args=None):
     while args:
         arg = args.pop(0)
         if not state:
-            if arg.startswith('-e') or arg.startswith('--environment'):
-                state = 'env_files'
-            else:
+            for flag, key in flags.iteritems():
+                if arg.startswith(flag):
+                    state = key
+
+            # Done with our flags
+            if not state:
                 results['cmd'] = [arg] + args
                 break
+
         elif state:
-            results[state].append(arg)
+            results[args].append((state, arg))
             state = None
 
     return results
@@ -56,11 +93,7 @@ def parse_args(args=None):
 def main():
     args = parse_args()
 
-    print(args)
-    for fn in args.get('env_files'):
-        new_env = yaml.safe_load(open(fn))
-        flat_env = dict(env(new_env))
-        os.environ.update(flat_env)
+    map(lambda func, arg: func(arg), args['actions'])
 
     if args['cmd']:
         subprocess.call(args['cmd'])
