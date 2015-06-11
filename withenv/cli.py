@@ -14,10 +14,12 @@ def env(node, prefix=None):
     for k, v in node.iteritems():
         if prefix:
             k = prefix + '_' + k
-        elif not isinstance(v, dict):
+
+        if not isinstance(v, dict):
             yield (k, os.path.expandvars(str(v)))
         else:
-            for kid in self.env(node=v, prefix=k):
+            for kid in env(v, prefix=k):
+                print(kid)
                 yield kid
 
 
@@ -27,7 +29,7 @@ def parse_args(args=None):
     with a single value after the flag.
     """
 
-    args = args or sys.argv[1:]
+    args = args if args is not None else sys.argv[1:]
 
     results = {
         'cmd': [],
