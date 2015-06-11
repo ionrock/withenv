@@ -1,5 +1,7 @@
 .PHONY: clean-pyc clean-build docs clean
+SHELL=bash
 VENV=venv
+WITH_VENV=source $(VENV)/bin/activate
 CHEESE=https://pypi.python.org/pypi
 BUMPTYPE=patch
 
@@ -60,9 +62,10 @@ coverage:
 docs:
 	rm -f docs/withenv.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ withenv
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
+
+	$(WITH_VENV) && sphinx-apidoc -o docs/ withenv
+	$(WITH_VENV) && $(MAKE) -C docs clean
+	$(WITH_VENV) && $(MAKE) -C docs html
 	open docs/_build/html/index.html
 
 release: clean
