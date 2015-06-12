@@ -38,7 +38,7 @@ def find_yml_in_dir(dirname):
     return fnames
 
 
-def update_yaml_from_dir(dirname):
+def update_env_from_dir(dirname):
     for fname in find_yml_in_dir(dirname):
         update_env_from_file(fname)
 
@@ -72,8 +72,8 @@ def parse_args(args=None):
     flags = {
         '-e': update_env_from_file,
         '--environment': update_env_from_file,
-        '-d': update_yaml_from_dir,
-        '--directory': update_yaml_from_dir,
+        '-d': update_env_from_dir,
+        '--directory': update_env_from_dir,
     }
 
     action = None
