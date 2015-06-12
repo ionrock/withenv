@@ -21,7 +21,7 @@ environment prior to the command running.
 See the docs_ for more info.
 
 * Free software: BSD license
-* Documentation: https://withenv.readthedocs.org.
+* Documentation: https://withenv.readthedocs.org
 
 
-.. -docs:
+.. _docs: https://withenv.readthedocs.org
