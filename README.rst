@@ -5,7 +5,7 @@ withenv
 .. image:: https://travis-ci.org/ionrock/withenv.png?branch=master
         :target: https://travis-ci.org/ionrock/withenv
 
-.. image:: https://pypip.in/d/withenv/badge.png
+.. image:: https://badge.fury.io/py/withenv.svg
         :target: https://pypi.python.org/pypi/withenv
 
 
