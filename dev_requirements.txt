@@ -4,3 +4,4 @@ pytest
 mock
 bumpversion
 sphinx
+tox
