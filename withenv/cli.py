@@ -6,6 +6,7 @@ import subprocess
 from heapq import heappush
 
 import yaml
+import six
 
 
 def flatten(node, prefix=None):
@@ -13,7 +14,7 @@ def flatten(node, prefix=None):
     This is an iterator that returns a list of flattened env
     vars based on the conf file supplied
     """
-    for k, v in node.iteritems():
+    for k, v in six.iteritems(node):
         if prefix:
             k = prefix + '_' + k
 
@@ -81,7 +82,7 @@ def parse_args(args=None):
     while args:
         arg = args.pop(0)
         if not action:
-            for flag, func in flags.iteritems():
+            for flag, func in six.iteritems(flags):
                 if arg.startswith(flag):
                     action = func
 
