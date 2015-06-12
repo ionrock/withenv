@@ -36,14 +36,15 @@ is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-withenv could always use more documentation, whether as part of the
+`withenv` could always use more documentation, whether as part of the
 official withenv docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/ionrock/withenv/issues.
+The best way to send feedback is to file an issue at
+https://github.com/ionrock/withenv/issues.
 
 If you are proposing a feature:
 
@@ -62,11 +63,11 @@ Ready to contribute? Here's how to set up `withenv` for local development.
 
     $ git clone git@github.com:your_name_here/withenv.git
 
-3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
+3. Install your local copy into a virtualenv. This is how you set up
+   your fork for local development::
 
-    $ mkvirtualenv withenv
     $ cd withenv/
-    $ python setup.py develop
+    $ make bootstrap
 
 4. Create a branch for local development::
 
@@ -74,13 +75,11 @@ Ready to contribute? Here's how to set up `withenv` for local development.
 
    Now you can make your changes locally.
 
-5. When you're done making changes, check that your changes pass flake8 and the tests, including testing other Python versions with tox::
+5. When you're done making changes, check that your changes pass
+   flake8 and the tests, including testing other Python versions with
+   tox::
 
-    $ flake8 withenv tests
-    $ python setup.py test
-    $ tox
-
-   To get flake8 and tox, just pip install them into your virtualenv.
+    $ make test-all
 
 6. Commit your changes and push your branch to GitHub::
 
@@ -89,6 +88,7 @@ Ready to contribute? Here's how to set up `withenv` for local development.
     $ git push origin name-of-your-bugfix-or-feature
 
 7. Submit a pull request through the GitHub website.
+
 
 Pull Request Guidelines
 -----------------------
@@ -108,4 +108,4 @@ Tips
 
 To run a subset of tests::
 
-    $ python -m unittest tests.test_withenv
+    $ py.test tests/test_my_test.py::TestClass::test_func
