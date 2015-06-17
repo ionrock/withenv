@@ -14,7 +14,6 @@ help:
 	@echo "lint - check style with flake8"
 	@echo "test - run tests quickly with the default Python"
 	@echo "test-all - run tests on every Python version with tox"
-	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
 	@echo "release - package and upload a release."
 	@echo '          use `-e CHEESE=http://localpypi` to release somewhere else.'
@@ -53,12 +52,6 @@ test:
 test-all:
 	tox
 
-coverage:
-	coverage run --source withenv setup.py test
-	coverage report -m
-	coverage html
-	open htmlcov/index.html
-
 docs:
 	rm -f docs/withenv.rst
 	rm -f docs/modules.rst
@@ -77,6 +70,3 @@ dist: clean
 
 bump:
 	$(VENV)/bin/bumpversion $(BUMPTYPE)
-
-run:
-	$(VENV)/bin/honcho start -f Procfile.dev
