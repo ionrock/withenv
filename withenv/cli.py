@@ -11,6 +11,23 @@ import six
 from .flatten import flatten
 
 
+def print_help_and_exit(*args):
+    help = '''usage: we [OPTIONS]... COMMAND
+
+Prepare the environment variables prior to running a command.
+
+    -e, --environment    use a specific YAML file
+    -d, --directory      recursively use a directory of YAML files
+
+    -h, --help           display this message
+
+More than one flag can be used a time. Each flag will be applied to
+the environment variables in order, allowing a cascade of changes.
+'''
+    print(help)
+    sys.exit(0)
+
+
 def find_yml_in_dir(dirname):
     def is_yaml(fn):
         return fn.endswith(('yml', 'yaml'))
@@ -62,6 +79,11 @@ def parse_args(args=None):
         '--directory': update_env_from_dir,
     }
 
+    booleans = {
+        '-h': print_help_and_exit,
+        '--help': print_help_and_exit,
+    }
+
     action = None
 
     while args:
@@ -70,6 +92,10 @@ def parse_args(args=None):
             for flag, func in six.iteritems(flags):
                 if arg.startswith(flag):
                     action = func
+
+            for flag, func in six.iteritems(booleans):
+                if arg.startswith(flag):
+                    results['actions'].append((func, None))
 
             # Done with our flags
             if not action:
