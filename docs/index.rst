@@ -6,6 +6,14 @@
 Welcome to withenv's documentation!
 ======================================
 
+Withenv is a tool to help manage your environment variables
+consistently.
+
+The idea behind withenv is to have an easy way set environment
+variables prior to running some program that depends on them, leaving
+your shell in a sane state.
+
+
 Contents:
 
 .. toctree::
