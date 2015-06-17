@@ -8,22 +8,7 @@ from heapq import heappush
 import yaml
 import six
 
-
-def flatten(node, prefix=None):
-    """
-    This is an iterator that returns a list of flattened env
-    vars based on the conf file supplied
-    """
-    for k, v in six.iteritems(node):
-        if prefix:
-            k = prefix + '_' + k
-
-        if not isinstance(v, dict):
-            yield (k, os.path.expandvars(str(v)))
-        else:
-            for kid in flatten(v, prefix=k):
-                print(kid)
-                yield kid
+from .flatten import flatten
 
 
 def find_yml_in_dir(dirname):
@@ -90,7 +75,6 @@ def parse_args(args=None):
             if not action:
                 results['cmd'] = [arg] + args
                 break
-
         elif action:
             results['actions'].append((action, arg))
             action = None
@@ -106,6 +90,11 @@ def main():
 
     if args['cmd']:
         subprocess.call(' '.join(args['cmd']), shell=True)
+    else:
+        # print our env as a file sourceable in bash.
+        items = sorted([(k, v) for k, v in six.iteritems(os.environ)])
+        for k, v in items:
+            print("export %s='%s'" % (k, v))
 
 if __name__ == '__main__':
     main()
