@@ -115,7 +115,7 @@ def main():
         func(arg)
 
     if args['cmd']:
-        subprocess.call(' '.join(args['cmd']), shell=True)
+        sys.exit(subprocess.call(' '.join(args['cmd']), shell=True))
     else:
         # print our env as a file sourceable in bash.
         items = sorted([(k, v) for k, v in six.iteritems(os.environ)])
