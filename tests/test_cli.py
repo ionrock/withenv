@@ -1,6 +1,6 @@
 import subprocess
 
-from mock import patch
+from mock import patch, Mock
 
 from withenv import cli
 
@@ -8,10 +8,7 @@ from withenv import cli
 class TestMain(object):
 
     def parse_args():
-        return {
-            'actions': [],
-            'cmd': 'ls -la'.split(),
-        }
+        return Mock(actions=[], cmd='ls -la'.split())
 
     @patch.object(cli, 'parse_args', parse_args)
     @patch.object(cli.sys, 'exit')
