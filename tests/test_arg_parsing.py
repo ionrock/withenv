@@ -19,7 +19,7 @@ class TestArgParsing(object):
 
         result = parse_args([
             '-e', 'foo.yml',
-            '--environment', 'bar.yml',
+            '--env', 'bar.yml',
             '-d', 'baz',
             'ls', '-la'
         ])

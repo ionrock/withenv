@@ -8,9 +8,9 @@ class AddToEnvsAction(Action):
 
     action_map = {
         '-e': 'file',
-        '--environment': 'file',
+        '--env': 'file',
         '-d': 'directory',
-        '--directory': 'directory',
+        '--dir': 'directory',
         '-a': 'alias',
         '--alias': 'alias',
     }
