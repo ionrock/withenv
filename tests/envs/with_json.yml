@@ -1,0 +1,15 @@
+
+- foo: >
+    {
+      "chef": {
+        "attrs": {
+          "allow_sshd": true,
+          "allow_https": true,
+          "allow_wildwest": true,
+          "enabled": true,
+          "wildwest":  {
+            "cloudnet": "eth2"
+          }
+        }
+      }
+    }
