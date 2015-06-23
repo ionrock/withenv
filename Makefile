@@ -70,5 +70,5 @@ dist: clean
 
 bump:
 	$(VENV)/bin/bumpversion $(BUMPTYPE)
-	git push
+	git push origin master
 	git push --tags
