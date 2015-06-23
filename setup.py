@@ -17,7 +17,7 @@ requirements = [
 
 setup(
     name='withenv',
-    version='0.3.0',
+    version='0.4.0',
     description=('Prefix commands with specific environments specified '
                  'in YAML files.'),
     long_description=readme,
