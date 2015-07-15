@@ -47,7 +47,6 @@ def update_env_from_alias(fname, env):
         (k, v) for action in action_list
         for k, v in action.items()
     ]
-    print(actions)
     return compile(actions, env)
 
 
