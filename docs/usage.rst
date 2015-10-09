@@ -83,3 +83,36 @@ We can then run our command with a shortened `we` command.
 .. code-block:: bash
 
    $ we -a myalias create-app-server
+
+
+Loading Defaults
+================
+
+Withenv will look for a default alias file called `.werc`. The `we`
+command will look in the current directory and walk the filesystem
+until it finds a `.werc` file. If it finds a `.werc`, it will load it
+as an alias file prior to any command line arguments. If no `.werc` is
+found, `we` continues normally.
+
+For example, lets say that you had a some projects for different
+clients. Each client provided credentials to a cloud account and you
+want to use the specific client when running commands.
+
+The `.werc` might look like this:
+
+.. code-block:: yaml
+
+   # .werc
+   ---
+   - file: client.yml
+   - file: ~/projects/clients/$CLIENT/creds.yml
+
+
+The `client.yml` would add the `$CLIENT` env var. Now you could see
+what instances your client has running.
+
+.. code-block:: bash
+
+   $ we ec2-describe-regions
+   # or for rackspace
+   $ we rack servers instance list
