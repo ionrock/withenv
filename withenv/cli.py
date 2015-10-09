@@ -8,6 +8,7 @@ from heapq import heappush
 import yaml
 import six
 
+from .config import load_config_file
 from .args import parse_args
 from .env import compile
 
@@ -15,7 +16,10 @@ from .env import compile
 def main():
     args = parse_args()
 
-    os.environ = compile(args.actions)
+    actions = load_config_file()
+    actions.extend(args.actions or [])
+
+    os.environ = compile(actions)
 
     if args.cmd:
         sys.exit(subprocess.call(' '.join(args.cmd), shell=True))

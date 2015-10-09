@@ -22,8 +22,8 @@ class TestFindYmlInDir(EnvInfo):
 
     def test_load_dir(self):
         base = os.path.join(HERE, 'envs', 'foo', 'default')
-        result = list(find_yml_in_dir(self.env))
-        assert result == self.env_files
+        result = set(list(find_yml_in_dir(self.env)))
+        assert result == set(self.env_files)
 
 
 class TestCompileEnv(EnvInfo):
