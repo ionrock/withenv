@@ -8,6 +8,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 class EnvInfo(object):
 
+    def envs_path(self, *tail):
+        return os.path.join(HERE, 'envs', *tail)
+
     def setup(self):
         self.env = os.path.join(HERE, 'envs', 'foo')
         self.base = os.path.join(HERE, 'envs', 'foo', 'default')
@@ -46,3 +49,16 @@ class TestCompileEnv(EnvInfo):
             ('file', fname) for fname in self.env_files
         ]
         assert compile(actions, {}) == self.foo_env
+
+    def test_compile_with_empty_file(self):
+        actions = [
+            ('file', self.envs_path('empty.yml'))
+        ]
+
+        assert compile(actions, {}) == {}
+
+    def test_compile_with_empty_alias(self):
+        actions = [
+            ('alias', self.envs_path('empty.yml'))
+        ]
+        assert compile(actions, {}) == {}

@@ -36,6 +36,9 @@ def update_env_from_file(fname, env):
     if isinstance(new_env, dict):
         new_env = [new_env]
 
+    if not new_env:
+        return
+
     for item in new_env:
         for k, v in flatten(item):
             env[k] = v
@@ -43,6 +46,9 @@ def update_env_from_file(fname, env):
 
 def update_env_from_alias(fname, env):
     action_list = yaml.safe_load(open(fname))
+    if not action_list:
+        return env
+
     actions = [
         (k, v) for action in action_list
         for k, v in action.items()
