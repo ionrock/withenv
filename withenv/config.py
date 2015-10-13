@@ -1,4 +1,6 @@
 import os
+import yaml
+
 
 CONFIG_FILE = '.werc'
 
