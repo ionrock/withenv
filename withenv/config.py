@@ -1,6 +1,4 @@
 import os
-import yaml
-
 
 CONFIG_FILE = '.werc'
 
@@ -11,7 +9,7 @@ def find_config_file(start=None, filename=CONFIG_FILE):
     if os.path.exists(conf):
         return conf
 
-    if start == '/':
+    if start == os.path.abspath(os.sep):
         return None
 
     parent = os.path.normpath(os.path.abspath(os.path.join(start, '..')))
