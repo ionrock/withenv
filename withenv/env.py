@@ -9,6 +9,12 @@ import yaml
 
 from withenv.flatten import flatten
 
+def path_relative_to(root, fname):
+    root = os.path.abspath(root)
+    if not os.path.isdir(root):
+        root = os.path.dirname(root)
+    return os.path.normpath(os.path.join(root, fname))
+
 
 def find_yml_in_dir(dirname):
     def is_yaml(fn):
@@ -50,7 +56,7 @@ def update_env_from_alias(fname, env):
         return env
 
     actions = [
-        (k, v) for action in action_list
+        (k, path_relative_to(fname, v)) for action in action_list
         for k, v in action.items()
     ]
     return compile(actions, env)
