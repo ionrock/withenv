@@ -9,10 +9,15 @@ class AddToEnvsAction(Action):
     action_map = {
         '-e': 'file',
         '--env': 'file',
+
         '-d': 'directory',
         '--dir': 'directory',
+
         '-a': 'alias',
         '--alias': 'alias',
+
+        '-E': 'override',
+        '--envvar': 'override',
     }
 
     def __init__(self, *args, **kw):
@@ -59,6 +64,13 @@ def parse_args(args=None):
         help=('a YAML file containing a list of '
               'file/directory to apply to the environment'),
         metavar='ALIAS YML',
+    )
+
+    parser.add_argument(
+        '-E', '--envvar', dest='actions',
+        nargs='?', action=AddToEnvsAction,
+        help=('override a single envvar'),
+        metavar='ENVVAR',
     )
 
     parser.add_argument(

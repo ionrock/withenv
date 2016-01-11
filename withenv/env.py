@@ -62,11 +62,17 @@ def update_env_from_alias(fname, env):
     return compile(actions, env)
 
 
+def update_env_from_override(override, env):
+    k, _, v = override.partition('=')
+    env[k] = v
+
+
 def find_action(name):
     actions = {
         'file': update_env_from_file,
         'directory': update_env_from_dir,
         'alias': update_env_from_alias,
+        'override': update_env_from_override,
     }
     return actions[name]
 
