@@ -1,6 +1,6 @@
 .PHONY: clean-pyc clean-build docs clean
 SHELL=bash
-VENV=venv
+VENV=.venv
 WITH_VENV=source $(VENV)/bin/activate
 CHEESE=https://pypi.python.org/pypi
 BUMPTYPE=patch
