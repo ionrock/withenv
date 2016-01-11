@@ -62,3 +62,11 @@ class TestCompileEnv(EnvInfo):
             ('alias', self.envs_path('empty.yml'))
         ]
         assert compile(actions, {}) == {}
+
+    def test_compile_with_overrides(self):
+        actions = [
+            ('directory', self.env),
+            ('override', 'C=False'),
+        ]
+
+        assert compile(actions, {})['C'] == 'False'
