@@ -22,7 +22,14 @@ def main():
     os.environ = compile(actions)
 
     if args.cmd:
-        sys.exit(subprocess.call(' '.join(args.cmd), shell=True))
+        proc = subprocess.Popen(' '.join(args.cmd), shell=True)
+        try:
+            proc.wait()
+        except (SystemExit, KeyboardInterrupt):
+            proc.kill()
+
+        sys.exit(proc.returncode)
+
     else:
         # print our env as a file sourceable in bash.
         items = sorted([(k, v) for k, v in six.iteritems(os.environ)])
