@@ -16,6 +16,24 @@ def path_relative_to(root, fname):
     return os.path.normpath(os.path.join(root, fname))
 
 
+def load_shell_env_file(fname):
+    # look for lines with export and parse them
+    env = {}
+    with open(fname) as fh:
+        for line in fh:
+            if line.startswith('export'):
+                prefix, _, envvar = line.partition(' ')
+                k, _, v = envvar.partition('=')
+                env[k] = v
+
+    return env
+
+def load_env_file(fname):
+    if fname.endswith(['yml', 'yaml']):
+        return yaml.safe_load(open(fname))
+    return load_shell_env_file(fname)
+
+
 def find_yml_in_dir(dirname):
     def is_yaml(fn):
         return fn.endswith(('yml', 'yaml'))
@@ -48,7 +66,6 @@ def update_env_from_file(fname, env):
     for item in new_env:
         for k, v in flatten(item):
             env[k] = v
-
 
 def update_env_from_alias(fname, env):
     action_list = yaml.safe_load(open(fname))
