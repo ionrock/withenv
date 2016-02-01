@@ -52,6 +52,54 @@ you need explicit ordering within your file, use a list of hashes.
    - FOO: bar
    - BAR: hello $FOO
 
+Here we see the `$FOO` variable is used within the value of `$BAR`.
+
+
+Environment Files
+-----------------
+
+Withenv also makes an effort to include environment
+files. Specifically, you can include a file that use the format:
+
+.. code-block:: bash
+
+   export $VARNAME=$VALUE
+
+Each line is parsed as an entry. This can be a typical shell script as
+lines that don't start with `export` will be ignored. With that in
+mind, functions defined in the script will not be available.
+
+
+Command Substitutions
+=========================
+
+Sometimes you want to replace a variable based on the result of a
+command. Say for example, you wanted to grab a value from a `chef
+environment <https://docs.chef.io/environments.html>`_. We can use the
+`knife <https://docs.chef.io/knife.html>`_ and `jq
+<https://stedolan.github.io/jq/>`_ to grab the value and inject into
+our environment value.
+
+.. code-block:: yaml
+
+   ---
+   - CHEF_ENV: dev
+   - TOKEN: "`knife environment show $CHEF_ENV -Fj | jq --raw-output .default_attributes.token`"
+
+The knife command will go to our chef server and grab the
+environment's configuration and output it as JSON. This output is
+piped to the `jq` command where we are able to use `JSONPath <http://jsonpath.com/>`_ to grab the field value we need. The
+`--raw-output` will ensure we don't have any quotes around the value.
+
+We could then use this in a commmand.
+
+.. code-block:: bash
+
+   $ we -e token.yml curl -H 'X-Auth-Token: $TOKEN' http://example.com/api/
+
+Currently, `withenv` supports this dynamic substitution when the value
+starts and endswith a backtick.
+
 
 Creating an Alias
 =================
@@ -66,6 +114,7 @@ account and process to run.
    $ we -d envs/apps/foo \
         -e envs/acct/dev.yml \
 	-e envs/regions/us-east \
+	-E TAG=foo
 	./create-app-server
 
 We can create an alias for this by creating an alias YAML file.
@@ -77,6 +126,7 @@ We can create an alias for this by creating an alias YAML file.
    - directory: envs/apps/foo
    - file: envs/acct/dev.yml
    - file: envs/regions/us-east
+   - override: "TAG=foo"
 
 We can then run our command with a shortened `we` command.
 
