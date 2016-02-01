@@ -2,10 +2,12 @@
 Compile our environment from directories and files.
 """
 import os
+import subprocess
 
 from heapq import heappush
 
 import yaml
+import json
 
 from withenv.flatten import flatten
 
@@ -16,6 +18,12 @@ def path_relative_to(root, fname):
     return os.path.normpath(os.path.join(root, fname))
 
 
+def compiled_value(v):
+    if v.startswith('`') and v.endswith('`'):
+        return subprocess.check_output(v[1:-1], shell=True).strip()
+    return v
+
+
 def load_shell_env_file(fname):
     # look for lines with export and parse them
     env = {}
@@ -24,12 +32,12 @@ def load_shell_env_file(fname):
             if line.startswith('export'):
                 prefix, _, envvar = line.partition(' ')
                 k, _, v = envvar.partition('=')
-                env[k] = v
+                env[k] = compiled_value(v)
 
     return env
 
 def load_env_file(fname):
-    if fname.endswith(['yml', 'yaml']):
+    if fname.endswith(('yml', 'yaml')):
         return yaml.safe_load(open(fname))
     return load_shell_env_file(fname)
 
@@ -53,7 +61,7 @@ def update_env_from_dir(dirname, env):
 
 
 def update_env_from_file(fname, env):
-    new_env = yaml.safe_load(open(fname))
+    new_env = load_env_file(fname)
     flat_env = {}
 
     # Order isn't important
@@ -65,23 +73,26 @@ def update_env_from_file(fname, env):
 
     for item in new_env:
         for k, v in flatten(item):
-            env[k] = v
+            env[k] = compiled_value(v)
 
 def update_env_from_alias(fname, env):
     action_list = yaml.safe_load(open(fname))
     if not action_list:
         return env
 
-    actions = [
-        (k, path_relative_to(fname, v)) for action in action_list
-        for k, v in action.items()
-    ]
+    actions = []
+    for action in action_list:
+        for k, v in action.items():
+            if not k == 'override':
+                v = path_relative_to(fname, v)
+            actions.append((k, v))
+
     return compile(actions, env)
 
 
 def update_env_from_override(override, env):
     k, _, v = override.partition('=')
-    env[k] = v
+    env[k] = compiled_value(v)
 
 
 def find_action(name):
