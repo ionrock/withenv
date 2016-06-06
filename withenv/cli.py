@@ -15,7 +15,11 @@ def main():
     actions = load_config_file()
     actions.extend(args.actions or [])
 
-    os.environ = compile(actions)
+    env = None
+    if args.clean:
+        env = {}
+
+    os.environ = compile(actions, env)
 
     if args.cmd:
         proc = subprocess.Popen(' '.join(args.cmd), shell=True)

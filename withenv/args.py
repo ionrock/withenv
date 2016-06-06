@@ -42,6 +42,11 @@ def parse_args(args=None):
     )
 
     parser.add_argument(
+        '--clean', action='store_true', default=False,
+        help='Only use the enviroment from the YAML',
+    )
+
+    parser.add_argument(
         '-e', '--env', dest='actions',
         nargs='?', action=AddToEnvsAction,
         help='a YAML file to include in the environment',
