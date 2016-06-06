@@ -1,11 +1,7 @@
 import os
 import sys
-import json
 import subprocess
 
-from heapq import heappush
-
-import yaml
 import six
 
 from .config import load_config_file

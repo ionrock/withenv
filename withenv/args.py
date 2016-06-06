@@ -1,5 +1,4 @@
 import sys
-import textwrap
 
 from argparse import ArgumentParser, Action, REMAINDER
 
@@ -31,7 +30,6 @@ class AddToEnvsAction(Action):
 
 
 def parse_args(args=None):
-    actions = []
     parser = ArgumentParser(
         prog='we',
         usage='%(prog)s -h [-e ENV_YAML] [-d DIR] [-a ALIAS_YAML] CMD',
