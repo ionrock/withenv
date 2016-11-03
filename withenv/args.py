@@ -17,6 +17,9 @@ class AddToEnvsAction(Action):
 
         '-E': 'override',
         '--envvar': 'override',
+
+        '-s': 'script',
+        '--script': 'script',
     }
 
     def __init__(self, *args, **kw):
@@ -74,6 +77,13 @@ def parse_args(args=None):
         nargs='?', action=AddToEnvsAction,
         help=('override a single envvar'),
         metavar='ENVVAR',
+    )
+
+    parser.add_argument(
+        '-s', '--script', dest='actions',
+        nargs='?', action=AddToEnvsAction,
+        help=('use the yaml or json output from a script or command'),
+        metavar='SCRIPT',
     )
 
     parser.add_argument(

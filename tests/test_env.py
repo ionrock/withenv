@@ -70,3 +70,10 @@ class TestCompileEnv(EnvInfo):
         ]
 
         assert compile(actions, {})['C'] == 'False'
+
+    def test_compile_with_script(self):
+        actions = [
+            ('script', 'cat %s' % self.env_files[0]),
+        ]
+
+        assert compile(actions, {})['A'] == 'True'
