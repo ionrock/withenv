@@ -103,7 +103,7 @@ def update_env_from_script(script, env):
     try:
         new_env = yaml.safe_load(doc)
         update_env_from_obj(new_env, env)
-    except yaml.YAMLError, e:
+    except yaml.YAMLError as e:
         print('Invalid YAML: %s' % e)
         os.exit(1)
 
