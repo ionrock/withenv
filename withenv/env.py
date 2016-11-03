@@ -7,7 +7,6 @@ import subprocess
 from heapq import heappush
 
 import yaml
-import json
 
 from withenv.flatten import flatten
 
@@ -36,6 +35,7 @@ def load_shell_env_file(fname):
                 env[k] = compiled_value(v)
 
     return env
+
 
 def load_env_file(fname):
     if fname.endswith(('yml', 'yaml')):
@@ -67,6 +67,7 @@ def update_env_from_obj(new_env, env):
     for item in new_env:
         for k, v in flatten(item):
             env[k] = compiled_value(v)
+
 
 def update_env_from_dir(dirname, env):
     for fname in find_yml_in_dir(dirname):
