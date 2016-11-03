@@ -11,6 +11,7 @@ import json
 
 from withenv.flatten import flatten
 
+
 def path_relative_to(root, fname):
     root = os.path.abspath(root)
     if not os.path.isdir(root):
@@ -55,15 +56,7 @@ def find_yml_in_dir(dirname):
     return fnames
 
 
-def update_env_from_dir(dirname, env):
-    for fname in find_yml_in_dir(dirname):
-        update_env_from_file(fname, env)
-
-
-def update_env_from_file(fname, env):
-    new_env = load_env_file(fname)
-    flat_env = {}
-
+def update_env_from_obj(new_env, env):
     # Order isn't important
     if isinstance(new_env, dict):
         new_env = [new_env]
@@ -74,6 +67,16 @@ def update_env_from_file(fname, env):
     for item in new_env:
         for k, v in flatten(item):
             env[k] = compiled_value(v)
+
+def update_env_from_dir(dirname, env):
+    for fname in find_yml_in_dir(dirname):
+        update_env_from_file(fname, env)
+
+
+def update_env_from_file(fname, env):
+    new_env = yaml.safe_load(open(fname))
+    update_env_from_obj(new_env, env)
+
 
 def update_env_from_alias(fname, env):
     action_list = yaml.safe_load(open(fname))
@@ -95,12 +98,23 @@ def update_env_from_override(override, env):
     env[k] = compiled_value(v)
 
 
+def update_env_from_script(script, env):
+    doc = subprocess.check_output(script, shell=True)
+    try:
+        new_env = yaml.safe_load(doc)
+        update_env_from_obj(new_env, env)
+    except yaml.YAMLError, e:
+        print('Invalid YAML: %s' % e)
+        os.exit(1)
+
+
 def find_action(name):
     actions = {
         'file': update_env_from_file,
         'directory': update_env_from_dir,
         'alias': update_env_from_alias,
         'override': update_env_from_override,
+        'script': update_env_from_script,
     }
     return actions[name]
 
