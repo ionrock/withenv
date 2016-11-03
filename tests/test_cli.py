@@ -4,23 +4,11 @@ import tempfile
 import signal
 
 
-from mock import patch, Mock
-
-from withenv import cli
-
-
 class TestMain(object):
 
-    def parse_args():
-        return Mock(actions=[], cmd='ls -la'.split())
-
-    @patch.object(cli, 'parse_args', parse_args)
-    @patch.object(cli.sys, 'exit')
-    def test_main_calls_command(self, exit):
-        cli.main()
-        exit.assert_called_with(0)
-
     def test_we_return_code(self):
+        assert subprocess.check_output('which we'.split()) != ""
+        assert subprocess.check_output('which echo'.split()) != ""
         assert subprocess.call('we echo'.split()) == 0
         assert subprocess.call('we eccho'.split()) == 127
 
