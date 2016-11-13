@@ -87,6 +87,12 @@ def parse_args(args=None):
     )
 
     parser.add_argument(
+        '-D', '--dump',
+        help=('Dump the env to a file and remove when the process exits'),
+        metavar='ENVFILE',
+    )
+
+    parser.add_argument(
         'cmd', nargs=REMAINDER,
         help='The command to run with the supplied environment.',
         metavar='CMD'
