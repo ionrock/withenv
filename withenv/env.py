@@ -20,8 +20,8 @@ def path_relative_to(root, fname):
 
 def compiled_value(v):
     if v.startswith('`') and v.endswith('`'):
-        return subprocess.check_output(v[1:-1], shell=True).strip()
-    return v
+        v = subprocess.check_output(v[1:-1], shell=True).strip()
+    return os.path.expandvars(v)
 
 
 def load_shell_env_file(fname):

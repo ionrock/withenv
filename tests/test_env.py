@@ -1,6 +1,6 @@
 import os
 
-from withenv.env import find_yml_in_dir, compile
+from withenv.env import find_yml_in_dir, compile, compiled_value
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -77,3 +77,16 @@ class TestCompileEnv(EnvInfo):
         ]
 
         assert compile(actions, {})['A'] == 'True'
+
+
+class TestCompileValue(object):
+    def setup(self):
+        os.environ['MYTESTVAR'] = 'foo'
+
+    def teardown(self):
+        del os.environ['MYTESTVAR']
+
+    def test_expand_envvars(self):
+        assert 'hello-foo' == compiled_value('hello-$MYTESTVAR')
+        assert 'hello-foo' == compiled_value('hello-${MYTESTVAR}')
+        assert 'hello-$(MYTESTVAR)' == compiled_value('hello-$(MYTESTVAR)')
