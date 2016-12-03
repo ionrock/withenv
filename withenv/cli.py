@@ -9,6 +9,30 @@ from .args import parse_args
 from .env import compile
 
 
+class Executor(object):
+
+    def __init__(self, cmd):
+        self.cmd = cmd
+
+    def expanded_cmd(self):
+        cmd = []
+        for part in self.cmd:
+            cmd.append(os.path.expandvars(part))
+        return cmd
+
+    def __call__(self):
+        try:
+            proc = subprocess.Popen(self.expanded_cmd())
+            proc.wait()
+        except OSError as e:
+            print(e)
+            sys.exit(e.errno)
+        except (SystemExit, KeyboardInterrupt):
+            proc.kill()
+
+        return proc
+
+
 def main():
     args = parse_args()
 
@@ -28,11 +52,8 @@ def main():
                 for k, v in os.environ.iteritems():
                     fh.write('%s=%s\n' % (k, v))
 
-        proc = subprocess.Popen(' '.join(args.cmd), shell=True)
-        try:
-            proc.wait()
-        except (SystemExit, KeyboardInterrupt):
-            proc.kill()
+        cmd = Executor(args.cmd)
+        proc = cmd()
 
         if args.dump:
             os.remove(args.dump)

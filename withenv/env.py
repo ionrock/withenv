@@ -2,6 +2,7 @@
 Compile our environment from directories and files.
 """
 import os
+import shlex
 import subprocess
 
 from heapq import heappush
@@ -18,9 +19,17 @@ def path_relative_to(root, fname):
     return os.path.normpath(os.path.join(root, fname))
 
 
+def string_to_cmd(command):
+    return [
+        os.path.expandvars(part)
+        for part in shlex.split(command)
+    ]
+
+
 def compiled_value(v):
     if v.startswith('`') and v.endswith('`'):
-        v = subprocess.check_output(v[1:-1], shell=True).strip()
+        cmd = string_to_cmd(v[1:-1])
+        v = subprocess.check_output(cmd).strip()
     return os.path.expandvars(v)
 
 
@@ -100,7 +109,7 @@ def update_env_from_override(override, env):
 
 
 def update_env_from_script(script, env):
-    doc = subprocess.check_output(script, shell=True)
+    doc = subprocess.check_output(string_to_cmd(script))
     try:
         new_env = yaml.safe_load(doc)
         update_env_from_obj(new_env, env)

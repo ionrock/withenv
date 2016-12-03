@@ -90,3 +90,6 @@ class TestCompileValue(object):
         assert 'hello-foo' == compiled_value('hello-$MYTESTVAR')
         assert 'hello-foo' == compiled_value('hello-${MYTESTVAR}')
         assert 'hello-$(MYTESTVAR)' == compiled_value('hello-$(MYTESTVAR)')
+
+    def test_generate_compiled_output_from_cmd(self):
+        assert compiled_value('`echo $MYTESTVAR`') == 'foo'
