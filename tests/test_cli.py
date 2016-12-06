@@ -10,7 +10,9 @@ class TestMain(object):
         assert subprocess.check_output('which we'.split()) != ""
         assert subprocess.check_output('which echo'.split()) != ""
         assert subprocess.call('we echo'.split()) == 0
-        assert subprocess.call('we eccho'.split()) == 127
+
+        # We use the python errno as the exit code
+        assert subprocess.call('we eccho'.split()) == 2
 
     def test_we_catches_ctrl_c(self):
         fd, path = tempfile.mkstemp()

@@ -2,6 +2,7 @@
 Compile our environment from directories and files.
 """
 import os
+import shlex
 import subprocess
 
 from heapq import heappush
@@ -18,9 +19,51 @@ def path_relative_to(root, fname):
     return os.path.normpath(os.path.join(root, fname))
 
 
+def string_to_cmd(command):
+    return [
+        os.path.expandvars(part)
+        for part in shlex.split(command)
+    ]
+
+
+def find_piped_cmds(cmd):
+    if '|' not in cmd:
+        return None
+
+    cmds = []
+    cur = []
+    for part in cmd:
+        if part == '|':
+            cmds.append(cur)
+            cur = []
+        else:
+            cur.append(part)
+    cmds.append(cur)
+    return cmds
+
+
+def get_cmd_output(cmd):
+    cmds = find_piped_cmds(cmd)
+
+    if not cmds:
+        return subprocess.check_output(cmd)
+
+    # we have multiple commands
+    proc = subprocess.Popen(cmds[0], stdout=subprocess.PIPE)
+    stdout, _ = proc.communicate()
+    for cmd in cmds[1:]:
+        proc = subprocess.Popen(
+            cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE
+        )
+        stdout, _ = proc.communicate(stdout)
+    proc.wait()
+    return stdout
+
+
 def compiled_value(v):
     if v.startswith('`') and v.endswith('`'):
-        v = subprocess.check_output(v[1:-1], shell=True).strip()
+        cmd = string_to_cmd(v[1:-1])
+        v = get_cmd_output(cmd).strip()
     return os.path.expandvars(v)
 
 
@@ -100,7 +143,8 @@ def update_env_from_override(override, env):
 
 
 def update_env_from_script(script, env):
-    doc = subprocess.check_output(script, shell=True)
+    doc = get_cmd_output(string_to_cmd(script))
+    print(doc)
     try:
         new_env = yaml.safe_load(doc)
         update_env_from_obj(new_env, env)
