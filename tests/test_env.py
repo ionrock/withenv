@@ -100,7 +100,7 @@ class TestCompileValue(object):
         assert 'hello-$(MYTESTVAR)' == compiled_value('hello-$(MYTESTVAR)')
 
     def test_generate_compiled_output_from_cmd(self):
-        assert compiled_value('`echo $MYTESTVAR`') == 'foo'
+        assert compiled_value('`echo $MYTESTVAR`') == b'foo'
 
 
 class TestRunningCommands(object):
@@ -115,4 +115,4 @@ class TestRunningCommands(object):
 
     def test_get_cmd_output_with_pipes(self):
         cmd = env.string_to_cmd(self.piped_cmd)
-        assert env.get_cmd_output(cmd) == 'Foo\n'
+        assert env.get_cmd_output(cmd) == b'Foo\n'
