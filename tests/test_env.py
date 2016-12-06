@@ -1,6 +1,7 @@
 import os
 
 from withenv.env import find_yml_in_dir, compile, compiled_value
+from withenv import env
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -78,6 +79,13 @@ class TestCompileEnv(EnvInfo):
 
         assert compile(actions, {})['A'] == 'True'
 
+    def test_compile_with_script_with_pipes(self):
+        actions = [
+            ('script', 'echo "%s" | xargs cat' % self.env_files[0]),
+        ]
+
+        assert compile(actions, {})['A'] == 'True'
+
 
 class TestCompileValue(object):
     def setup(self):
@@ -93,3 +101,18 @@ class TestCompileValue(object):
 
     def test_generate_compiled_output_from_cmd(self):
         assert compiled_value('`echo $MYTESTVAR`') == 'foo'
+
+
+class TestRunningCommands(object):
+    piped_cmd = 'echo "foo" | tr f F'
+
+    def test_find_commands(self):
+        cmd = env.string_to_cmd(self.piped_cmd)
+        assert env.find_piped_cmds(cmd) == [
+            ['echo', 'foo'],
+            ['tr', 'f', 'F'],
+        ]
+
+    def test_get_cmd_output_with_pipes(self):
+        cmd = env.string_to_cmd(self.piped_cmd)
+        assert env.get_cmd_output(cmd) == 'Foo\n'
