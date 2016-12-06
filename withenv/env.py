@@ -144,7 +144,6 @@ def update_env_from_override(override, env):
 
 def update_env_from_script(script, env):
     doc = get_cmd_output(string_to_cmd(script))
-    print(doc)
     try:
         new_env = yaml.safe_load(doc)
         update_env_from_obj(new_env, env)
